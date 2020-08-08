@@ -11,9 +11,9 @@ import java.util.Random;
 
 public class GameManager extends AbstractGame
 {
-    private static int tileWidth, tileHeight, worldSizeX, worldSizeY, worldOriginX, worldOriginY, mx, my, cellX, cellY, worldX, worldY,  selectedX, selectedY;
+    private static int tileWidth, tileHeight, worldSizeX, worldSizeY, worldOriginX, worldOriginY, mx, my, cellX, cellY, selectedX, selectedY;
     private int[] tileMap;
-    private Random rand = new Random();
+    private Random rand = new Random(System.currentTimeMillis());
 
 
 
@@ -63,6 +63,7 @@ public class GameManager extends AbstractGame
         double lb = Math.sqrt((double)tileWidth/4 + (double)tileHeight/4); //from the middle of the cell to the midpoint of the side of the tile
         double ub = Math.sqrt((double)tileWidth/2 + (double)tileHeight/2); //from the middle of the cell to the corner of the cell
         if(lb < d && d < ub) //if the mouse is within the four corners of the cell
+        {
             if (cellMYNormal >= cellMXNormal) //if the mouse is in the lower left half of the cell
             {
                 if (cellMYNormal < 0.5) //if the mouse is in the upper half of the cell
@@ -74,16 +75,14 @@ public class GameManager extends AbstractGame
             }
             else //if the mouse is in the upper right half of the cell
             {
-                if(cellMXNormal < 0.5) //if the mouse is in the left half of the cell
+                if (cellMXNormal < 0.5) //if the mouse is in the left half of the cell
                     selectedX -= 1;
-                else if(cellMYNormal < 0.5) //if the mouse is in the upper half of the cell
+                else if (cellMYNormal < 0.5) //if the mouse is in the upper half of the cell
                     selectedY -= 1;
                 else //if the mouse is in the lower half of the cell
                     selectedX += 1;
             }
-        worldX = (worldOriginX * tileWidth) + (cellX - cellY) * tileWidth / 2;
-        worldY = (worldOriginY * tileHeight) + (cellX + cellY) * tileHeight / 2;
-
+        }
 
         if(selectedX >= 0 && selectedX < worldSizeX && selectedY >= 0 && selectedY < worldSizeY)
             if(gc.getInput().isButtonDown(MouseEvent.BUTTON1))
@@ -93,8 +92,10 @@ public class GameManager extends AbstractGame
             }
             else if(gc.getInput().isButtonDown(MouseEvent.BUTTON3))
             {
-                if(tileMap[selectedY * worldSizeX + selectedX] - 1 < 0) tileMap[selectedY * worldSizeX + selectedX] = 4;
-                else --tileMap[selectedY * worldSizeX + selectedX];
+                if(tileMap[selectedY * worldSizeX + selectedX] - 1 < 0)
+                    tileMap[selectedY * worldSizeX + selectedX] = 4;
+                else
+                    --tileMap[selectedY * worldSizeX + selectedX];
             }
 
     }
