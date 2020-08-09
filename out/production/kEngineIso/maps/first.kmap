@@ -1,0 +1,18 @@
+### This is a map of the first area - a small walled area and its surroundings
+### These are the types of tiles there can be:
+### 0   WATER
+### 1   GRASS
+### 2   WALL
+### 3   HOLE
+### 4   TREE
+### Here we will build the map
+### In this example there is a 9x9 grid with water on the outside, then grass, then wall, with an entrance, and trees in the centre, with a hole amidst them
+WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER
+WATER   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   WATER
+WATER   GRASS   WALL    WALL    WALL    WALL    WALL    GRASS   WATER
+WATER   GRASS   WALL    TREE    TREE    TREE    WALL    GRASS   WATER
+WATER   GRASS   WALL    TREE    HOLE    TREE    WALL    GRASS   WATER
+WATER   GRASS   WALL    TREE    TREE    TREE    WALL    GRASS   WATER
+WATER   GRASS   WALL    WALL    GRASS   WALL    WALL    GRASS   WATER
+WATER   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   WATER
+WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER

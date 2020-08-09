@@ -11,8 +11,9 @@ import java.util.Random;
 
 public class GameManager extends AbstractGame
 {
-    private static int tileWidth, tileHeight, worldSizeX, worldSizeY, worldOriginX, worldOriginY, mx, my, cellX, cellY, selectedX, selectedY;
-    private int[] tileMap;
+    public static int[] tileMap;
+    public static int worldSizeX, worldSizeY, worldOriginX, worldOriginY;
+    private static int tileWidth, tileHeight, mx, my, cellX, cellY, selectedX, selectedY;
     private Random rand = new Random(System.currentTimeMillis());
 
 
@@ -25,18 +26,11 @@ public class GameManager extends AbstractGame
         worldSizeY = newWorldSizeY;
         worldOriginX = newWorldOriginX;
         worldOriginY = newWorldOriginY;
-
-        /*for(int x = 0; x < worldSizeX; x++)
-            for(int y = 0; y < worldSizeY; y++)
-                System.out.println(worldSizeX * y + x + y);*/
-
-
         tileMap = new int[worldSizeX * worldSizeY + worldSizeX + 1];
-        for(int i = 0; i < tileMap.length; i++)
-        {
-            //if(i >=1 && i < )
-            tileMap[i] = rand.nextInt(5);
-        }
+        //randomly populate the tilemap
+        /*for(int i = 0; i < tileMap.length; i++)
+            tileMap[i] = rand.nextInt(5);*/
+        KMap.parse("res/maps/first.kmap");
     }
 
     @Override
@@ -114,7 +108,7 @@ public class GameManager extends AbstractGame
             }
 
         r.drawText("Mouse: " + mx + ", " + my + "\nCell: " + cellX + ", " + cellY + "\nSelected: " + selectedX + ", " + selectedY, 0, 12, Color.WHITE.getRGB());
-        r.drawRect(cellX * tileWidth, cellY * tileHeight, tileWidth, tileHeight, Color.YELLOW.getRGB());
+        //r.drawRect(cellX * tileWidth, cellY * tileHeight, tileWidth, tileHeight, Color.YELLOW.getRGB());
         int[] points = calcScreenCoordsFromWorldCoords(selectedX, selectedY);
         r.drawImage(new Image("/tiles/highlight.png"), points[0], points[1]);
 
@@ -130,7 +124,8 @@ public class GameManager extends AbstractGame
                 toDraw = new Image("/tiles/grass.png");
                 break;
             case 2:
-                toDraw = new Image("/tiles/water.png");
+                toDraw = new Image("/tiles/wall.png");
+                offY -= tileHeight;
                 break;
             case 3:
                 toDraw = new Image("/tiles/hole.png");
@@ -141,8 +136,7 @@ public class GameManager extends AbstractGame
                 break;
             case 0:
             default:
-                toDraw = new Image("/tiles/wall.png");
-                offY -= tileHeight;
+                toDraw = new Image("/tiles/water.png");
                 break;
         }
 
