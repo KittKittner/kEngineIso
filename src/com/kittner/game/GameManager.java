@@ -6,12 +6,14 @@ import com.kittner.engine.Renderer;
 import com.kittner.engine.gfx.Image;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Random;
 
 public class GameManager extends AbstractGame
 {
     public static int[] tileMap;
+    public static KMap currentMap;
     public static int worldSizeX, worldSizeY, worldOriginX, worldOriginY;
     private static int tileWidth, tileHeight, mx, my, cellX, cellY, selectedX, selectedY;
     private Random rand = new Random(System.currentTimeMillis());
@@ -30,7 +32,8 @@ public class GameManager extends AbstractGame
         //randomly populate the tilemap
         /*for(int i = 0; i < tileMap.length; i++)
             tileMap[i] = rand.nextInt(5);*/
-        KMap.parse("res/maps/first.kmap");
+        setWorld(new KMap("res/maps/first.kmap"));
+        setWorld(new KMap("res/maps/second.kmap"));
     }
 
     @Override
@@ -79,18 +82,25 @@ public class GameManager extends AbstractGame
         }
 
         if(selectedX >= 0 && selectedX < worldSizeX && selectedY >= 0 && selectedY < worldSizeY)
-            if(gc.getInput().isButtonDown(MouseEvent.BUTTON1))
+        {
+            if (gc.getInput().isButtonDown(MouseEvent.BUTTON1))
             {
                 ++tileMap[selectedY * worldSizeX + selectedX];
                 tileMap[selectedY * worldSizeX + selectedX] %= 5;
             }
-            else if(gc.getInput().isButtonDown(MouseEvent.BUTTON3))
+            else if (gc.getInput().isButtonDown(MouseEvent.BUTTON3))
             {
-                if(tileMap[selectedY * worldSizeX + selectedX] - 1 < 0)
+                if (tileMap[selectedY * worldSizeX + selectedX] - 1 < 0)
                     tileMap[selectedY * worldSizeX + selectedX] = 4;
                 else
                     --tileMap[selectedY * worldSizeX + selectedX];
             }
+        }
+
+        if(gc.getInput().isKeyDown(KeyEvent.VK_F1))
+            setWorld(new KMap("res/maps/first.kmap"));
+        else if(gc.getInput().isKeyDown(KeyEvent.VK_F2))
+            setWorld(new KMap("res/maps/second.kmap"));
 
     }
 
@@ -151,10 +161,17 @@ public class GameManager extends AbstractGame
         };
     }
 
+    public static void setWorld(KMap kmap)
+    {
+        currentMap = kmap;
+        tileMap = kmap.getTileMap();
+        worldSizeX = kmap.getWorldSizeX();
+        worldSizeY = kmap.getWorldSizeY();
+    }
 
     public static void main(String[] args)
     {
-        GameContainer gc = new GameContainer(new GameManager(32, 16, 17, 17, 10 ,3),
+        GameContainer gc = new GameContainer(new GameManager(48, 24, 17, 17, 5 ,2),
                 640, 360, 2);
         gc.start();
     }
