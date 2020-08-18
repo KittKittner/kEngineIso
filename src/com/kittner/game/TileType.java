@@ -7,13 +7,13 @@ import java.util.Map;
 public enum TileType
 {
     WATER(0),
-    WTR(0),
     GRASS(1),
     WALL(2),
     HOLE(3),
     TREE(4);
 
     // Deal with caching the values for reference
+    //Thanks to user Jon Skeet: https://stackoverflow.com/questions/1167982/check-if-enum-exists-in-java/15154737
     private static final Map<String, TileType> nameToValueMap = new HashMap<String, TileType>();
     static
     {

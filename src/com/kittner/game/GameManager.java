@@ -28,12 +28,24 @@ public class GameManager extends AbstractGame
         worldSizeY = newWorldSizeY;
         worldOriginX = newWorldOriginX;
         worldOriginY = newWorldOriginY;
-        tileMap = new int[worldSizeX * worldSizeY + worldSizeX + 1];
+        tileMap = new int[worldSizeX * worldSizeY + worldSizeX];
         //randomly populate the tilemap
-        /*for(int i = 0; i < tileMap.length; i++)
-            tileMap[i] = rand.nextInt(5);*/
-        setWorld(new KMap("res/maps/first.kmap"));
-        setWorld(new KMap("res/maps/second.kmap"));
+        for(int i = 0; i < tileMap.length; i++)
+            tileMap[i] = rand.nextInt(5);
+
+        //testing location logic
+        try
+        {
+            Location loc = new Location("The Great Blue", Location.getRoot());
+            Location loca = new Location("The Small Blue", Location.getRoot());
+            Location locc = new Location("This shouldn't exist", new Location("Bad Parent", Location.getRoot()));
+            Location loccc = new Location("Sea of Children", loc);
+            Location locccc = new Location("A Child's Reef", loccc);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -98,9 +110,9 @@ public class GameManager extends AbstractGame
         }
 
         if(gc.getInput().isKeyDown(KeyEvent.VK_F1))
-            setWorld(new KMap("res/maps/first.kmap"));
+            setMap(new KMap("res/maps/first.kmap"));
         else if(gc.getInput().isKeyDown(KeyEvent.VK_F2))
-            setWorld(new KMap("res/maps/second.kmap"));
+            setMap(new KMap("res/maps/second.kmap"));
 
     }
 
@@ -161,7 +173,7 @@ public class GameManager extends AbstractGame
         };
     }
 
-    public static void setWorld(KMap kmap)
+    public static void setMap(KMap kmap)
     {
         currentMap = kmap;
         tileMap = kmap.getTileMap();

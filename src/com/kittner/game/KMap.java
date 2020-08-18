@@ -5,10 +5,14 @@ import java.io.FileReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 public class KMap
 {
-    public static Map<String, KMap> maps = new LinkedHashMap<String, KMap>(8);
+    public static final int MAX_CACHED_MAPS = 8;
+
+    public static Map<String, KMap> maps = new LinkedHashMap<String, KMap>(MAX_CACHED_MAPS);
+    private Location rootLocation;
     private int worldSizeX, worldSizeY;
     private int[] tileMap;
 
@@ -23,7 +27,16 @@ public class KMap
             updateGame();
         }
         else
+        {
+            if(maps.size() >= MAX_CACHED_MAPS)
+            {
+                Set<String> mapSet = maps.keySet();
+                maps.remove(mapSet.iterator().next()); //remove the least recently cached map
+                System.out.println("ininiininin");
+            }
             this.parse(filepath);
+        }
+
     }
 
     private void parse(String filepath)
