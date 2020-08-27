@@ -16,6 +16,15 @@ public class KMap
     private int worldSizeX, worldSizeY;
     private int[] tileMap;
 
+    public KMap(int[] tileMap, int x, int y)
+    {
+        rootLocation = Location.getRoot();
+        this.tileMap = tileMap;
+        worldSizeX = x;
+        worldSizeY = y;
+        maps.put("random", this);
+    }
+
     public KMap(String filepath)
     {
         if(maps.containsKey(filepath))
@@ -24,6 +33,7 @@ public class KMap
             worldSizeX = temp.getWorldSizeX();
             worldSizeY = temp.getWorldSizeY();
             tileMap = temp.getTileMap();
+            rootLocation = temp.getRootLocation();
             updateGame();
         }
         else
@@ -31,40 +41,84 @@ public class KMap
             if(maps.size() >= MAX_CACHED_MAPS)
             {
                 Set<String> mapSet = maps.keySet();
-                maps.remove(mapSet.iterator().next()); //remove the least recently cached map
-                System.out.println("ininiininin");
+                maps.remove(mapSet.iterator().next()); //remove the least recently cached map //TODO: might remove the most recently added
             }
-            this.parse(filepath);
+            try
+            {
+                this.parse(filepath);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
-
     }
 
-    private void parse(String filepath)
+    private void parse(String filepath) throws Exception
     {
         try
         {
             this.createWorldMapBounds(filepath);
 
             int x = 0, y = 0;
-            Scanner in = new Scanner(new FileReader(filepath)), line;
+            Scanner in = new Scanner(new FileReader(filepath));
             in.useDelimiter("\\s+");
+            Location currentFirst = null, currentSecond = null, currentThird = null;
             while (in.hasNext())
             {
                 String nextLine = in.nextLine();
                 if (!isAComment(nextLine)) //if not a comment --- [########## this is a comment]
                 {
-                    //System.out.println(nextLine);
-                    line = new Scanner(nextLine);
-                    line.useDelimiter("[\\t\\s]+");
-                    while(line.hasNext())
+                    Scanner line;
+                    if(isMetaData(nextLine))
                     {
-                        String next = line.next();
-                        tileMap[y * worldSizeX + x] = TileType.forName(next) != null ? TileType.forName(next).id : 0;
-                        x++;
-                        //System.out.println(TileType.forName(next));
+                        line = new Scanner(nextLine);
+                        line.useDelimiter("\\s*:\\s*");
+                        while(line.hasNext())
+                        {
+                            String next = line.next();
+                            String tempName;
+                            switch(next.trim())
+                            {
+                                case "root":
+                                    this.rootLocation = new Location(line.next());
+                                    break;
+                                case "first":
+                                    tempName = line.next();
+                                    assert this.rootLocation != null;
+                                    this.rootLocation.getChildren().putIfAbsent(tempName, new Location(tempName, this.rootLocation));
+                                    currentFirst = Location.get(tempName, this.rootLocation);
+                                    break;
+                                case "second":
+                                    tempName = line.next();
+                                    assert currentFirst != null;
+                                    currentFirst.getChildren().putIfAbsent(tempName, new Location(tempName, currentFirst));
+                                    currentSecond = Location.get(tempName);
+                                    break;
+                                case "third":
+                                    tempName = line.next();
+                                    assert  currentSecond != null;
+                                    currentThird = currentSecond.getChildren().putIfAbsent(tempName, new Location(tempName, currentSecond));
+                                    break;
+                                default:
+                                    throw new Exception("Cannot read meta data [" + next + "]");
+                            }
+                        }
                     }
-                    x = 0;
-                    y++;
+                    else
+                    {
+                        line = new Scanner(nextLine);
+                        line.useDelimiter("[\\t\\s]+");
+                        while(line.hasNext())
+                        {
+                            String next = line.next();
+                            tileMap[y * worldSizeX + x] = TileType.forName(next) != null ? TileType.forName(next).id : 0;
+                            x++;
+                            //System.out.println(TileType.forName(next));
+                        }
+                        x = 0;
+                        y++;
+                    }
                     line.close();
                 }
             }
@@ -100,7 +154,7 @@ public class KMap
         while(in.hasNextLine())
         {
             String nextLine = in.nextLine();
-            if(!isAComment(nextLine))
+            if(!isAComment(nextLine) && !isMetaData(nextLine))
             {
                 yCounter++;
                 line = new Scanner(nextLine);
@@ -121,7 +175,14 @@ public class KMap
 
     private static boolean isAComment(String s)
     {
+        //At the start of the line, if there is any amount of whitespace followed by at least three hashes, match to the rest of the line's characters too
         return s.matches("^\\s*#{3,}.*"); //if not a comment --- [########## this is a comment]
+    }
+
+    private static boolean isMetaData(String s)
+    {
+        //At the start of the line and after any amount of whitespace, if there is a dash, match with it and the rest of the characters
+        return s.matches("^\\s*.+\\s*:\\s*.+$");
     }
 
     private void updateTileMaps(int[] newMap)
@@ -156,5 +217,14 @@ public class KMap
     public void setTileMap(int[] tileMap)
     {
         this.tileMap = tileMap;
+    }
+
+    public Location getRootLocation()
+    {
+        return rootLocation;
+    }
+    public void setRootLocation(Location loc)
+    {
+        rootLocation = loc;
     }
 }

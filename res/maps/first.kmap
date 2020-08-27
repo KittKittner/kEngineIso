@@ -7,8 +7,11 @@
 ### 4   TREE
 ### Here we will build the map
 ### In this example there is a 9x9 grid with water on the outside, then grass, then wall, with an entrance, and trees in the centre, with a hole amidst them
+### An empty row will be turned into all water tiles, if you want whitespace then you should use a commented empty line
+###
 WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER
 WATER   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   WATER
+### You can even have commments within the map if you want to explain a certain bit (but not on the same line as map data, yet?)
 WATER   GRASS   WALL    WALL    WALL    WALL    WALL    GRASS   WATER
 WATER   GRASS   WALL    TREE    TREE    TREE    WALL    GRASS   WATER
 WATER   GRASS   WALL    TREE    HOLE    TREE    WALL    GRASS   WATER
@@ -16,3 +19,12 @@ WATER   GRASS   WALL    TREE    TREE    TREE    WALL    GRASS   WATER
 WATER   GRASS   WALL    WALL    GRASS   WALL    WALL    GRASS   WATER
 WATER   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   WATER
 WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER
+###
+### Any meta data for the map should be declared with a colon (:) separating the type of data and the data itself, as below:
+###
+###Location data
+ root : Temple of the Moon
+    first : Antechamber
+        second : Bench of the Mother
+        second : Bench of the Father
+    first : Entrance

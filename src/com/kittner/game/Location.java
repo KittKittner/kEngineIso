@@ -16,11 +16,26 @@ public class Location
     }
 
     //constructor for the root location with a cyclical parent pointer
-    private Location(String name)
+    public Location(String name)
     {
-        this.name = name;
-        this.parent = this;
-        this.children = new HashMap<String, Location>();
+        if(name.equalsIgnoreCase("world"))
+        {
+            this.name = name;
+            this.parent = this;
+            this.children = new HashMap<String, Location>();
+        }
+        else if(isInWorldTree(name))
+        {
+            this.name = Location.get(name).getName();
+            this.parent = Location.get(name).getParent();
+            this.children = Location.get(name).getChildren();
+        }
+        else
+        {
+            this.name = name;
+            this.parent = world;
+            this.children = new HashMap<String, Location>();
+        }
     }
 
     public Location(String name, Location parent) throws Exception
@@ -33,16 +48,77 @@ public class Location
             parent.addChild(this);
         }
         else
-            throw new Exception("Parent location " + parent.getName() + " is not a part of the world tree and location " + this.name + " could not be added.");
+        {
+            this.parent = world;
+            world.addChild(this);
+            //throw new Exception("Parent location " + parent.getName() + " is not a part of the world tree and location " + this.name + " could not be added.");
+        }
+    }
+    public Location(String name, String parent)
+    {
+        this.name = name;
+        this.children = new HashMap<String, Location>();
+        if(isInWorldTree(parent))
+        {
+            this.parent = get(parent);
+        }
+        else
+        {
+            this.parent = new Location(parent);
+        }
+        this.parent.addChild(this);
     }
 
+    public static Location get(String name){return get(name, world);}
+    public static Location get(String name, Location parentIfAbsent)
+    {
+        if(isInWorldTree(name))
+        {
+            return traverseAndGet(world, name);
+        }
+        else
+        {
+            try
+            {
+                return new Location(name, parentIfAbsent);
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                return world;
+            }
+        }
+    }
+    protected static Location traverseAndGet(Location root, String target)
+    {
+        for(Location current : root.getChildren().values())
+        {
+            if(current.getName().equalsIgnoreCase(target))
+                return current;
+        }
+        return world;
+    }
 
-    protected boolean isInWorldTree(Location target)
+    protected static boolean isInWorldTree(String target)
+    {
+        if(target.equalsIgnoreCase("world")) return true;
+        return traverse(world, target);
+    }
+    private static boolean traverse(Location root, String target)
+    {
+        for(Location current : root.getChildren().values())
+        {
+            if(current.getName().equalsIgnoreCase(target) || traverse(current, target))
+                return true;
+        }
+        return false;
+    }
+    protected static boolean isInWorldTree(Location target)
     {
         if(target.equals(world)) return true;
         return traverse(world, target);
     }
-    private boolean traverse(Location root, Location target)
+    private static boolean traverse(Location root, Location target)
     {
         for(Location current : root.getChildren().values())
         {

@@ -32,20 +32,23 @@ public class GameManager extends AbstractGame
         //randomly populate the tilemap
         for(int i = 0; i < tileMap.length; i++)
             tileMap[i] = rand.nextInt(5);
+        currentMap = new KMap(tileMap, worldSizeX, worldSizeY);
 
         //testing location logic
         try
         {
             Location loc = new Location("The Great Blue", Location.getRoot());
             Location loca = new Location("The Small Blue", Location.getRoot());
-            Location locc = new Location("This shouldn't exist", new Location("Bad Parent", Location.getRoot()));
+            Location locc = new Location("This should exist", new Location("Bad Parent", Location.getRoot()));
             Location loccc = new Location("Sea of Children", loc);
             Location locccc = new Location("A Child's Reef", loccc);
+
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -114,6 +117,14 @@ public class GameManager extends AbstractGame
         else if(gc.getInput().isKeyDown(KeyEvent.VK_F2))
             setMap(new KMap("res/maps/second.kmap"));
 
+
+        if(gc.getInput().isKeyDown(KeyEvent.VK_J))
+        {
+            System.out.println(currentMap.getRootLocation().getName());
+            System.out.println(currentMap.getRootLocation().getChildren());
+            for(Location loc : currentMap.getRootLocation().getChildren().values())
+                System.out.println(loc.getChildren());
+        }
     }
 
     @Override
@@ -176,6 +187,7 @@ public class GameManager extends AbstractGame
     public static void setMap(KMap kmap)
     {
         currentMap = kmap;
+        currentMap.setRootLocation(kmap.getRootLocation());
         tileMap = kmap.getTileMap();
         worldSizeX = kmap.getWorldSizeX();
         worldSizeY = kmap.getWorldSizeY();
@@ -183,7 +195,7 @@ public class GameManager extends AbstractGame
 
     public static void main(String[] args)
     {
-        GameContainer gc = new GameContainer(new GameManager(48, 24, 17, 17, 5 ,2),
+        GameContainer gc = new GameContainer(new GameManager(48, 24, 13, 13, 6 ,2),
                 640, 360, 2);
         gc.start();
     }
