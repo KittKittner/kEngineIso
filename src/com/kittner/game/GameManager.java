@@ -4,6 +4,7 @@ import com.kittner.engine.AbstractGame;
 import com.kittner.engine.GameContainer;
 import com.kittner.engine.Renderer;
 import com.kittner.engine.gfx.Image;
+import com.kittner.engine.gfx.ImageTile;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -14,9 +15,10 @@ public class GameManager extends AbstractGame
 {
     public static int[] tileMap;
     public static KMap currentMap;
+    public static Character pc = new Character("/sprites/pc-small.png", "/sprites/pc-big.png");
     public static int worldSizeX, worldSizeY, worldOriginX, worldOriginY;
-    private static int tileWidth, tileHeight, mx, my, cellX, cellY, selectedX, selectedY;
-    private Random rand = new Random(System.currentTimeMillis());
+    public static int tileWidth, tileHeight, mx, my, cellX, cellY, selectedX, selectedY;
+    public Random rand = new Random(System.currentTimeMillis());
 
 
 
@@ -33,22 +35,6 @@ public class GameManager extends AbstractGame
         for(int i = 0; i < tileMap.length; i++)
             tileMap[i] = rand.nextInt(5);
         currentMap = new KMap(tileMap, worldSizeX, worldSizeY);
-
-        //testing location logic
-        try
-        {
-            Location loc = new Location("The Great Blue", Location.getRoot());
-            Location loca = new Location("The Small Blue", Location.getRoot());
-            Location locc = new Location("This should exist", new Location("Bad Parent", Location.getRoot()));
-            Location loccc = new Location("Sea of Children", loc);
-            Location locccc = new Location("A Child's Reef", loccc);
-
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-
     }
 
     @Override
@@ -96,9 +82,14 @@ public class GameManager extends AbstractGame
             }
         }
 
+        //change the tile type of the selected tile
         if(selectedX >= 0 && selectedX < worldSizeX && selectedY >= 0 && selectedY < worldSizeY)
         {
             if (gc.getInput().isButtonDown(MouseEvent.BUTTON1))
+            {
+                pc.setTargetCoords(selectedX, selectedY);
+            }
+            /*if (gc.getInput().isButtonDown(MouseEvent.BUTTON1))
             {
                 ++tileMap[selectedY * worldSizeX + selectedX];
                 tileMap[selectedY * worldSizeX + selectedX] %= 5;
@@ -109,22 +100,15 @@ public class GameManager extends AbstractGame
                     tileMap[selectedY * worldSizeX + selectedX] = 4;
                 else
                     --tileMap[selectedY * worldSizeX + selectedX];
-            }
+            }*/
         }
+        
+
 
         if(gc.getInput().isKeyDown(KeyEvent.VK_F1))
             setMap(new KMap("res/maps/first.kmap"));
         else if(gc.getInput().isKeyDown(KeyEvent.VK_F2))
             setMap(new KMap("res/maps/second.kmap"));
-
-
-        if(gc.getInput().isKeyDown(KeyEvent.VK_J))
-        {
-            System.out.println(currentMap.getRootLocation().getName());
-            System.out.println(currentMap.getRootLocation().getChildren());
-            for(Location loc : currentMap.getRootLocation().getChildren().values())
-                System.out.println(loc.getChildren());
-        }
     }
 
     @Override
@@ -144,7 +128,7 @@ public class GameManager extends AbstractGame
         //r.drawRect(cellX * tileWidth, cellY * tileHeight, tileWidth, tileHeight, Color.YELLOW.getRGB());
         int[] points = calcScreenCoordsFromWorldCoords(selectedX, selectedY);
         r.drawImage(new Image("/tiles/highlight.png"), points[0], points[1]);
-
+        r.drawImage(pc.getSmallCharCurrentFrame(), pc.getX(), pc.getY());
     }
 
     public void drawTile(Renderer r, int tileType, int x, int y)
@@ -176,7 +160,7 @@ public class GameManager extends AbstractGame
         r.drawImage(toDraw, x + offX, y + offY);
     }
 
-    public int[]  calcScreenCoordsFromWorldCoords(int x, int y)
+    public static int[] calcScreenCoordsFromWorldCoords(int x, int y)
     {
         return new int[]{
                 (worldOriginX * tileWidth) + (x - y) * (tileWidth / 2),

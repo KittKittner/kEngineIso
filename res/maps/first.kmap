@@ -21,10 +21,10 @@ WATER   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   GRASS   WATER
 WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER   WATER
 ###
 ### Any meta data for the map should be declared with a colon (:) separating the type of data and the data itself, as below:
-###
 ###Location data
- root : Temple of the Moon
+root : Temple of the Moon
     first : Antechamber
         second : Bench of the Mother
         second : Bench of the Father
     first : Entrance
+### Note that indentation is not mandatory

@@ -38,7 +38,7 @@ public class Location
         }
     }
 
-    public Location(String name, Location parent) throws Exception
+    public Location(String name, Location parent)
     {
         this.name = name;
         this.children = new HashMap<String, Location>();

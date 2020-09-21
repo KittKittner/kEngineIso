@@ -67,7 +67,7 @@ public class KMap
             while (in.hasNext())
             {
                 String nextLine = in.nextLine();
-                if (!isAComment(nextLine)) //if not a comment --- [########## this is a comment]
+                if (!isAComment(nextLine))
                 {
                     Scanner line;
                     if(isMetaData(nextLine))
@@ -181,7 +181,7 @@ public class KMap
 
     private static boolean isMetaData(String s)
     {
-        //At the start of the line and after any amount of whitespace, if there is a dash, match with it and the rest of the characters
+        //e.g \tfirst : location the first\n
         return s.matches("^\\s*.+\\s*:\\s*.+$");
     }
 
